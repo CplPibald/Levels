@@ -252,72 +252,93 @@ public class EventLivingHurt
 		if (enemy != null)
 		{
 			// active
-			if (Ability.FIRE.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.FIRE.hasAbility(nbt))
 			{
-				double multiplier = Ability.FIRE.getMultiplier(Ability.FIRE.getLevel(nbt));
-				enemy.setFire((int) (4 * multiplier));
+                int level = Ability.FIRE.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.FIRE.getMultiplier(level);
+                    enemy.setFire((int) (4 * multiplier));
+                }
 			}
 			
-			if (Ability.FROST.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.FROST.hasAbility(nbt))
 			{
-				double multiplier = Ability.FROST.getMultiplier(Ability.FROST.getLevel(nbt));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) (20 * (2 * multiplier)), 10));
+                int level = Ability.FROST.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.FROST.getMultiplier(level);
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) (20 * (2 * multiplier)), 10));
+                }
+            }
+			
+			if (Ability.POISON.hasAbility(nbt))
+			{
+                int level = Ability.POISON.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.POISON.getMultiplier(level);
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.POISON, (int) (20 * (7 * multiplier)), Ability.POISON.getLevel(nbt)));
+                }
 			}
 			
-			if (Ability.POISON.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.BLOODLUST.hasAbility(nbt))
 			{
-				double multiplier = Ability.POISON.getMultiplier(Ability.POISON.getLevel(nbt));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.POISON, (int) (20 * (7 * multiplier)), Ability.POISON.getLevel(nbt)));
-			}
-			
-			if (Ability.BLOODLUST.hasAbility(nbt) && (int) (Math.random() * 7) == 0)
-			{
-				double multiplier = Ability.BLOODLUST.getMultiplier(Ability.BLOODLUST.getLevel(nbt));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.WITHER, (int) (20 * (4 * multiplier)), Ability.BLOODLUST.getLevel(nbt)));
+                int level = Ability.BLOODLUST.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    double multiplier = Ability.BLOODLUST.getMultiplier(level);
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.WITHER, (int) (20 * (4 * multiplier)), Ability.BLOODLUST.getLevel(nbt)));
+                }
 			}
 
-			if (Ability.CHAINED.hasAbility(nbt) && (int) (Math.random() * 10) == 0)
+			if (Ability.CHAINED.hasAbility(nbt))
 			{
-				double multiplier = Ability.CHAINED.getMultiplier(Ability.CHAINED.getLevel(nbt));
-				double radius = 10 * multiplier;
-				World world = enemy.getEntityWorld();
-				List<EntityMob> entityList = world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(player.posX - radius, player.posY - radius, player.posZ - radius, player.posX + radius, player.posY + radius, player.posZ + radius));
-				Iterator<EntityMob> iterator = entityList.iterator();
-				
-				while (iterator.hasNext())
-				{
-                    Entity entity = (Entity) iterator.next();
-					
-					if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer) && !(entity instanceof EntityAnimal))
-					{
-						entity.attackEntityFrom(DamageSource.causePlayerDamage(player), event.getAmount());
+                int level = Ability.CHAINED.getLevel(nbt);
+                if (Math.random() < (level / 10.0) )  {
+                    double multiplier = Ability.CHAINED.getMultiplier(level);
+                    double radius = 10 * multiplier;
+                    World world = enemy.getEntityWorld();
+                    List<EntityMob> entityList = world.getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(player.posX - radius, player.posY - radius, player.posZ - radius, player.posX + radius, player.posY + radius, player.posZ + radius));
+                    Iterator<EntityMob> iterator = entityList.iterator();
+                    
+                    while (iterator.hasNext())
+                    {
+                        Entity entity = (Entity) iterator.next();
+                        
+                        if (entity instanceof EntityLivingBase && !(entity instanceof EntityPlayer) && !(entity instanceof EntityAnimal))
+                        {
+                            entity.attackEntityFrom(DamageSource.causePlayerDamage(player), event.getAmount());
+                        }
 					}
 				}
 			}
 			
-			if (Ability.VOID.hasAbility(nbt) && (int) (Math.random() * 20) == 0)
+			if (Ability.VOID.hasAbility(nbt))
 			{
-				float multiplier = 0F;
-				
-				if (Ability.VOID.getLevel(nbt) == 1) multiplier = 0.4F;
-				else if (Ability.VOID.getLevel(nbt) == 2) multiplier = 0.6F;
-				else if (Ability.VOID.getLevel(nbt) == 3) multiplier = 0.8F;
+                int level = Ability.VOID.getLevel(nbt);
+                if (Math.random() < (level / 20.0) )  {
 
-				float damage = enemy.getMaxHealth() * multiplier;
-				event.setAmount(damage);
+                    float multiplier = 1.0F - 1.0F / (1 + level);
+                    float damage = event.getAmount() + enemy.getMaxHealth() * multiplier;
+                    event.setAmount(damage);
+                }
 			}
 			
 			// passive
-			if (Ability.LIGHT.hasAbility(nbt) && (int) (Math.random() * 7) == 0)
+			if (Ability.LIGHT.hasAbility(nbt))
 			{
-				enemy.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, (int) (20 * 6), Ability.LIGHT.getLevel(nbt)));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, (int) (20 * 6), Ability.LIGHT.getLevel(nbt)));
+                int level = Ability.LIGHT.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, (int) (20 * 6), level));
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, (int) (20 * 6), level));
+                }
 			}
 			
-			if (Ability.ETHEREAL.hasAbility(nbt) && (int) (Math.random() * 7) == 0)
+			if (Ability.ETHEREAL.hasAbility(nbt))
 			{
-				float health = (float) (player.getHealth() + (event.getAmount() / 2));
-				player.setHealth(health);
+                int level = Ability.ETHEREAL.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    float multiplier = 1.0F - 1.0F / (1 + level);
+                    float health = (float) (player.getHealth() + (event.getAmount() * multiplier));
+                    player.setHealth(health);
+                }
 			}
 		}
 	}
@@ -327,58 +348,77 @@ public class EventLivingHurt
 		if (enemy != null)
 		{
 			// active
-			if (Ability.MOLTEN.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.MOLTEN.hasAbility(nbt))
 			{
-				double multiplier = Ability.MOLTEN.getMultiplier(Ability.MOLTEN.getLevel(nbt));
-				enemy.setFire((int) (4 * multiplier));
+                int level = Ability.MOLTEN.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.MOLTEN.getMultiplier(level);
+                    enemy.setFire((int) (4 * multiplier));
+                }
+            }
+			
+			if (Ability.FROZEN.hasAbility(nbt))
+			{
+                int level = Ability.FROZEN.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.FROZEN.getMultiplier(level);
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) (20 * (2 * multiplier)), 10));
+                }
+            }
+			
+			if (Ability.TOXIC.hasAbility(nbt))
+			{
+                int level = Ability.TOXIC.getLevel(nbt);
+                if (Math.random() < (level / 4.0) )  {
+                    double multiplier = Ability.TOXIC.getMultiplier(level);
+                    enemy.addPotionEffect(new PotionEffect(MobEffects.POISON, (int) (20 * (7 * multiplier)), Ability.TOXIC.getLevel(nbt)));
+                }
 			}
 			
-			if (Ability.FROZEN.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.ABSORB.hasAbility(nbt))
 			{
-				double multiplier = Ability.FROZEN.getMultiplier(Ability.FROZEN.getLevel(nbt));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) (20 * (2 * multiplier)), 10));
+                int level = Ability.ABSORB.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    double multiplier = Ability.ABSORB.getMultiplier(level);
+                    player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, (int) (20 * (5 * multiplier)), level));
+                }
 			}
 			
-			if (Ability.TOXIC.hasAbility(nbt) && (int) (Math.random() * 4) == 0)
+			if (Ability.VOID.hasAbility(nbt))
 			{
-				double multiplier = Ability.TOXIC.getMultiplier(Ability.TOXIC.getLevel(nbt));
-				enemy.addPotionEffect(new PotionEffect(MobEffects.POISON, (int) (20 * (7 * multiplier)), Ability.TOXIC.getLevel(nbt)));
-			}
-			
-			if (Ability.ABSORB.hasAbility(nbt) && (int) (Math.random() * 7) == 0)
-			{
-				double multiplier = Ability.ABSORB.getMultiplier(Ability.ABSORB.getLevel(nbt));
-				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, (int) (20 * (5 * multiplier)), Ability.ABSORB.getLevel(nbt)));
-			}
-			
-			if (Ability.VOID.hasAbility(nbt) && (int) (Math.random() * 20) == 0)
-			{
-				float multiplier = 0F;
-				
-				if (Ability.VOID.getLevel(nbt) == 1) multiplier = 0.4F;
-				else if (Ability.VOID.getLevel(nbt) == 2) multiplier = 0.6F;
-				else if (Ability.VOID.getLevel(nbt) == 3) multiplier = 0.8F;
-
-				float damage = enemy.getMaxHealth() * multiplier;
-				event.setAmount(damage);
-			}
+                int level = Ability.VOID.getLevel(nbt);
+                if (Math.random() < (level / 20.0) )  {
+                    float multiplier = 1.0F - 1.0F / (1 + level);
+                    float damage = enemy.getMaxHealth() * multiplier;
+                    event.setAmount(damage);
+                }
+            }
 			
 			// passive
 			if (Ability.BEASTIAL.hasAbility(nbt))
-			{
-				if (player.getHealth() <= (player.getMaxHealth() * 0.2F))
+			{ 
+                int level = Ability.BEASTIAL.getLevel(nbt);
+                double threshold = level * 0.2;
+				if (player.getHealth() <= (player.getMaxHealth() * threshold))
 					player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20 * 10, 0));
 			}
 			
-			if (Ability.ENLIGHTENED.hasAbility(nbt) && (int) (Math.random() * 7) == 0)
+			if (Ability.ENLIGHTENED.hasAbility(nbt))
 			{
-				float health = (float) (player.getHealth() + (event.getAmount() / 2));
-				player.setHealth(health);
+                int level = Ability.ENLIGHTENED.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    float multiplier = 1.0F - 1.0F / (1 + level);
+                    float health = (float) (player.getHealth() + (event.getAmount() * multiplier));
+                    player.setHealth(health);
+                }
 			}
 			
-			if (Ability.HARDENED.hasAbility(nbt) && (int) (Math.random() * 10) == 0)
+			if (Ability.HARDENED.hasAbility(nbt))
 			{
-				event.setAmount(0F);
+                int level = Ability.HARDENED.getLevel(nbt);
+                if (Math.random() < (level / 7.0) )  {
+                    event.setAmount(0F);
+                }
 			}
 		}
 	}
